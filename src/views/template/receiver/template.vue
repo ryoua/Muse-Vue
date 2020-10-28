@@ -4,58 +4,51 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
+            <a-col :md="3" :sm="24">
+              <a-form-item label="模板ID">
                 <a-input v-model="queryParam.id" placeholder=""/>
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
+            <a-col :md="5" :sm="24">
+              <a-form-item label="模板名称">
+                <a-input v-model="queryParam.name" placeholder=""/>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="模板类型">
+                <a-select placeholder="请选择" default-value="">
+                  <a-select-option value="1">字符串</a-select-option>
+                  <a-select-option value="2">文件</a-select-option>
+                  <a-select-option value="3">SQL</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="用户id类型">
+                <a-select placeholder="请选择" default-value="">
+                  <a-select-option value="1">uid</a-select-option>
+                  <a-select-option value="2">phone</a-select-option>
+                  <a-select-option value="3">did</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="状态">
+                <a-select placeholder="请选择" default-value="">
+                  <a-select-option value="1">待审核</a-select-option>
+                  <a-select-option value="2">审核通过</a-select-option>
+                  <a-select-option value="3">审核不通过</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="2" :sm="24">
               <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                 <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
               </span>
             </a-col>
           </a-row>
@@ -79,7 +72,7 @@
       <s-table
         ref="table"
         size="default"
-        rowKey="key"
+        :rowKey="columns => columns.id"
         :columns="columns"
         :data="loadData"
         :alert="true"
@@ -89,19 +82,8 @@
         <span slot="serial" slot-scope="text, record, index">
           {{ index + 1 }}
         </span>
-        <span slot="templateType" slot-scope="text">
-          <a-badge :text="text | templateFilter" />
-        </span>
-
-        <span slot="receiverType" slot-scope="text">
-          <a-badge :text="text | receiverFilter" />
-        </span>
-
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
-        </span>
-        <span slot="description" slot-scope="text">
-          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
         </span>
 
         <span slot="action" slot-scope="text, record">
@@ -120,6 +102,7 @@
         :model="mdl"
         @cancel="handleCancel"
         @ok="handleOk"
+        @add="add"
       />
       <step-by-step-modal ref="modal" @ok="handleOk"/>
     </a-card>
@@ -130,25 +113,39 @@
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getRoleList } from '@/api/manage'
-import { receiverTemplateAll } from '@/api/template'
+import { receiverTemplateAll, addReceiverTemplate } from '@/api/template'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
 
+function convertContent() {
+
+}
+
 const columns = [
   {
-    title: '模板名',
+    title: 'ID',
+    dataIndex: 'id'
+  },
+  {
+    title: '模板名称',
     dataIndex: 'name'
   },
   {
     title: '模板类型',
-    dataIndex: 'templateType',
+    dataIndex: 'templatetype',
     scopedSlots: { customRender: 'templateType' }
   },
   {
     title: '用户id类型',
-    dataIndex: 'receiverType',
+    dataIndex: 'receivertype',
     scopedSlots: { customRender: 'receiverType' }
+  },
+  {
+    title: '内容',
+    dataIndex: 'content',
+    width: '400px',
+    scopedSlots: { customRender: 'content' }
   },
   {
     title: '状态',
@@ -156,12 +153,10 @@ const columns = [
     scopedSlots: { customRender: 'status' }
   },
   {
-    title: '备注',
-    dataIndex: 'remark'
-  },
-  {
     title: '更新时间',
-    dataIndex: 'updateTime',
+    dataIndex: 'updatetime',
+    width: '200px',
+    customRender: (text) => new Date(text).format("yyyy-MM-dd hh:mm:ss"),
     sorter: true
   },
   {
@@ -173,25 +168,25 @@ const columns = [
 ]
 
 const templateTypeMap = {
-  0: {
+  1: {
     text: '字符串'
   },
-  1: {
+  2: {
     text: '文件'
   },
-  2: {
+  3: {
     text: 'SQL语句'
   }
 }
 
 const receiverTypeMap = {
-  0: {
+  1: {
     text: 'uid'
   },
-  1: {
+  2: {
     text: 'phone'
   },
-  2: {
+  3: {
     text: 'did'
   }
 }
@@ -229,15 +224,20 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParam: {
+
+      },
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        console.log('loadData request parameters:', requestParameters)
         return receiverTemplateAll(requestParameters)
           .then(res => {
+            for (let i = 0; i < res.data.length; i++) {
+              res.data[i].receivertype = receiverTypeMap[res.data[i].receivertype].text
+              res.data[i].templatetype = templateTypeMap[res.data[i].templatetype].text
+            }
             return res
-          })
+          }).catch((e) => {})
       },
       selectedRowKeys: [],
       selectedRows: []
@@ -269,6 +269,12 @@ export default {
     }
   },
   methods: {
+    receiverFilter (type) {
+      return receiverTypeMap[type].text
+    },
+    templateFilter (type) {
+      return templateTypeMap[type].text
+    },
     handleAdd () {
       this.mdl = null
       this.visible = true
@@ -277,6 +283,11 @@ export default {
       this.visible = true
       this.mdl = { ...record }
     },
+
+    convertContent(data) {
+
+    },
+
     handleOk () {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
@@ -316,6 +327,49 @@ export default {
               this.$message.info('新增成功')
             })
           }
+        } else {
+          this.confirmLoading = false
+        }
+      })
+    },
+    add () {
+      const form = this.$refs.createModal.form
+      this.confirmLoading = true
+      form.validateFields((errors, values) => {
+        if (!errors) {
+          console.log('values', values)
+
+          if (values.templatetype === 1) {
+            values.content = values.receivers
+          } else if (values.templatetype === 2) {
+            values.content = values.fileurl
+          } else if (values.templatetype === 3) {
+            values.content = values.sql
+          }
+
+            // 新增
+          addReceiverTemplate(values).then(res => {
+              this.visible = false
+              this.confirmLoading = false
+              // 重置表单数据
+              form.resetFields()
+              // 刷新表格
+              this.$refs.table.refresh()
+            if (res.code === 200) {
+              this.$message.info('新增成功')
+            } else {
+              this.$message.error('新增失败')
+            }
+            }).catch(() => {
+            this.visible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+
+            this.$message.error('新增失败')
+          })
         } else {
           this.confirmLoading = false
         }

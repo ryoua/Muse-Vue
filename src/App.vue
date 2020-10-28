@@ -7,22 +7,52 @@
 </template>
 
 <script>
-import { domTitle, setDocumentTitle } from '@/utils/domUtil'
-import { i18nRender } from '@/locales'
+  import { domTitle, setDocumentTitle } from '@/utils/domUtil'
+  import { i18nRender } from '@/locales'
 
-export default {
-  data () {
-    return {
-    }
-  },
-  computed: {
-    locale () {
-      // 只是为了切换语言时，更新标题
-      const { title } = this.$route.meta
-      title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
+  export default {
+    data() {
+      return {
 
-      return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
+      }
+    },
+    computed: {
+      locale() {
+        Date.prototype.format = function (format)
+        {
+          /*
+           * eg:format="YYYY-MM-dd hh:mm:ss";
+           */
+          var o =
+            {
+              "M+" : this.getMonth() + 1, // month
+              "d+" : this.getDate(), // day
+              "h+" : this.getHours(), // hour
+              "m+" : this.getMinutes(), // minute
+              "s+" : this.getSeconds(), // second
+              "q+" : Math.floor((this.getMonth() + 3)  / 3), // quarter
+              "S" : this.getMilliseconds() // millisecond
+            }
+          if (/(y+)/.test(format))
+          {
+            format = format.replace(RegExp.$1, (this.getFullYear() + "") .substr(4 - RegExp.$1.length));
+          }
+          for ( var k in o)
+          {
+            if (new RegExp("(" + k + ")").test(format))
+            {
+              format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+          }
+          return format;
+        }
+
+        // 只是为了切换语言时，更新标题
+        const { title } = this.$route.meta
+        title && (setDocumentTitle(`${i18nRender(title)} - ${domTitle}`))
+
+        return this.$i18n.getLocaleMessage(this.$store.getters.lang).antLocale
+      }
     }
   }
-}
 </script>

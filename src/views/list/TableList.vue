@@ -79,7 +79,7 @@
       <s-table
         ref="table"
         size="default"
-        rowKey="key"
+        :rowKey="columns => columns.id"
         :columns="columns"
         :data="loadData"
         :alert="true"
@@ -209,6 +209,8 @@ export default {
         console.log('loadData request parameters:', requestParameters)
         return getServiceList(requestParameters)
           .then(res => {
+            console.log(res.result)
+            console.log(res)
             return res.result
           })
       },
