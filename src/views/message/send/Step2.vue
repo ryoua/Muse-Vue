@@ -92,7 +92,6 @@
 </template>
 
 <script>
-  import debounce from 'lodash/debounce';
   import { getAllMessageTemplateName } from '@/api/message'
 
   export default {

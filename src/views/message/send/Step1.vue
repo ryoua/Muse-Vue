@@ -82,7 +82,6 @@ export default {
 
 
     getData(param) {
-      console.log(param)
       this.$emit('getData', param)
     }
   }

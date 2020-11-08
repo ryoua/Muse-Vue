@@ -15,25 +15,6 @@
           <a-input v-decorator="['name', {rules: [{required: true, min: 1, message: '请输入模板名！'}]}]"/>
         </a-form-item>
 
-        <a-form-item
-          label="模板类型"
-          :labelCol="{lg: {span: 5}, sm: {span: 7}}"
-          :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
-        >
-          <a-input-group
-            style="display: inline-block; vertical-align: middle"
-            :compact="true"
-          >
-            <a-select style="width: 100px" v-model="type" v-decorator="['type', { initialValue: 1}]">
-              <a-select-option :value="1">短信</a-select-option>
-              <a-select-option :value="2">邮件</a-select-option>
-              <a-select-option :value="3">QQ</a-select-option>
-              <a-select-option :value="4">微信</a-select-option>
-              <a-select-option :value="5">小程序</a-select-option>
-              <a-select-option :value="6">通知消息</a-select-option>
-            </a-select>
-          </a-input-group>
-        </a-form-item>
 
         <a-form-item
           label="邮件标题"
@@ -41,7 +22,6 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="true"
           class="stepFormText"
-          v-show="type === 2"
         >
           <a-input
             style="width: 80%;"
@@ -53,7 +33,6 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="false"
           class="stepFormText"
-          v-show="type === 2"
         >
           <a-input
             style="width: 80%;"
@@ -65,7 +44,6 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="true"
           class="stepFormText"
-          v-show="type === 2"
         >
           <a-textarea
             style="width: 100%; height: 200px"

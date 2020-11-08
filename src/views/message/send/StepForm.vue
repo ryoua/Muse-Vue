@@ -63,7 +63,6 @@
         if (type === 3) {
           this.messageSend.receiver = data.receiver
         }
-
         console.log(this.messageSend)
       },
 
@@ -71,10 +70,11 @@
       nextStep() {
         if (this.currentTab === 2) {
             sendMessage(this.messageSend).then(res => {
-
             })
         }
+        if (this.currentTab === 0) {
 
+        }
         if (this.currentTab < 3) {
           this.currentTab += 1
         }

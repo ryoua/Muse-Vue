@@ -218,13 +218,12 @@ export const asyncRouterMap = [
             component: () => import('@/views/message/send/StepForm'),
             meta: { title: '消息发送', keepAlive: true, permission: [ 'user' ] }
           },
-          // {
-          //   path: '/message/send/history',
-          //   name: 'history',
-          //   component: () => import('@/views/template/receiver/template'),
-          //   meta: { title: '消息历史', keepAlive: true, permission: [ 'user' ] }
-          // }
-
+          {
+            path: '/message/send/history',
+            name: 'history',
+            component: () => import('@/views/message/history/history'),
+            meta: { title: '消息发送历史', keepAlive: true, permission: [ 'user' ] }
+          }
         ]
       },
 
