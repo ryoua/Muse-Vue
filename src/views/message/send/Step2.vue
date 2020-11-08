@@ -14,10 +14,10 @@
         :required="true"
       >
         <a-radio-group v-decorator="['choseTemplate', { initialValue: true }]" >
-          <a-radio-button :value="true" value="large" @click="changeChoseTemplate(true)">
+          <a-radio-button :value="true"  @click="changeChoseTemplate(true)">
             选用模板
           </a-radio-button>
-          <a-radio-button :value="false" value="default" @click="changeChoseTemplate(false)">
+          <a-radio-button :value="false"  @click="changeChoseTemplate(false)">
             自定义
           </a-radio-button>
         </a-radio-group>
@@ -118,8 +118,7 @@
     },
     handleChange(value) {
       console.log(value);
-      this.value = value.label;
-      // fetch(value, data => (this.data = data));
+      fetch(value, data => (this.data = data));
     },
     getTemplateName() {
       getAllMessageTemplateName().then((res) => {
@@ -131,6 +130,9 @@
       // 先校验，通过表单校验后，才进入下一步
       validateFields((err, values) => {
         if (!err) {
+          if (this.choseTemplate) {
+           values.id = values.templateId.label
+          }
           this.getData(values)
           this.$emit('nextStep')
         }
