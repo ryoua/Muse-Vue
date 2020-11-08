@@ -205,6 +205,29 @@ export const asyncRouterMap = [
         ]
       },
 
+      {
+        path: '/message',
+        component: RouteView,
+        redirect: '/message/send',
+        name: 'message',
+        meta: { title: '消息管理页', icon: 'table', keepAlive: true, permission: [ 'user' ] },
+        children: [
+          {
+            path: '/message/send',
+            name: 'send',
+            component: () => import('@/views/message/send/StepForm'),
+            meta: { title: '消息发送', keepAlive: true, permission: [ 'user' ] }
+          },
+          // {
+          //   path: '/message/send/history',
+          //   name: 'history',
+          //   component: () => import('@/views/template/receiver/template'),
+          //   meta: { title: '消息历史', keepAlive: true, permission: [ 'user' ] }
+          // }
+
+        ]
+      },
+
       // account
       {
         path: '/template',
@@ -213,6 +236,12 @@ export const asyncRouterMap = [
         name: 'template',
         meta: { title: '模板页', icon: 'table', keepAlive: true, permission: [ 'user' ] },
         children: [
+          {
+            path: '/template/message',
+            name: 'param',
+            component: () => import('@/views/template/message/template'),
+            meta: { title: '消息模板', keepAlive: true, permission: [ 'user' ] }
+          },
           {
                path: '/template/receiver',
                name: 'receiver',

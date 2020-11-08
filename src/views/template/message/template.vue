@@ -19,20 +19,8 @@
               <a-form-item label="模板类型">
                 <a-select placeholder="请选择" default-value="" v-model="queryParam.type">
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="1">字符串</a-select-option>
-                  <a-select-option value="2">文件</a-select-option>
-                  <a-select-option value="3">SQL</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="4" :sm="24">
-              <a-form-item label="用户id类型">
-                <a-select placeholder="请选择" default-value="" v-model="queryParam.receiverType">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="1">uid</a-select-option>
-                  <a-select-option value="2">phone</a-select-option>
-                  <a-select-option value="3">did</a-select-option>
+                  <a-select-option value="1">短信</a-select-option>
+                  <a-select-option value="2">邮件</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -84,15 +72,13 @@
         <span slot="serial" slot-scope="text, record, index">
           {{ index + 1 }}
         </span>
-        <span slot="content" slot-scope="text">
-<!--          <a-badge style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6;overflow: hidden"/>-->
-        </span>
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
         </span>
 
         <span slot="action" slot-scope="text, record">
           <template>
+              <a-button type="primary" size="small" @click="handleDetail(record)">详情</a-button>
             <a-divider type="vertical" />
             <a-popconfirm
               title="确定删除吗?"
@@ -101,9 +87,8 @@
               @confirm="handleSub(record)"
               @cancel="cancel"
             >
-        <a-button type="danger" size="small">删除</a-button>
-      </a-popconfirm>
-
+              <a-button type="danger" size="small">删除</a-button>
+            </a-popconfirm>
           </template>
         </span>
       </s-table>
@@ -120,6 +105,18 @@
         />
       <step-by-step-modal ref="modal" @ok="handleOk"/>
       </div>
+      <div v-if="detailVisible">
+      <detail
+        ref="createModal"
+        :visible="detailVisible"
+        :loading="confirmLoading"
+        :model="detail"
+        @cancel="handleDetailCancel"
+        @ok="handleOk"
+        @add="add"
+      />
+        <step-by-step-modal ref="modal" @ok="handleOk"/>
+      </div>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -128,21 +125,14 @@
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getRoleList } from '@/api/manage'
-import { receiverTemplateAll, addReceiverTemplate, deleteReceiverTemplateById, deleteReceiverTemplateByIds, receiverTemplateByParam } from '@/api/template'
+import { addMessageTemplate, messageTemplateAll, deleteMessageTemplateById, deleteMessageTemplateByIds, getMessageTemplateDetail } from '@/api/template'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
+import Detail from './modules/Detail'
 
 function convertContent() {
 
-}
-
-function filterContent(text) {
-  if (!text) return '';
-  if (text.length > 30) {
-    return text.slice(0, 30) + '...'
-  }
-  return text
 }
 
 const columns = [
@@ -158,18 +148,6 @@ const columns = [
     title: '模板类型',
     dataIndex: 'type',
     scopedSlots: { customRender: 'type' }
-  },
-  {
-    title: '用户id类型',
-    dataIndex: 'receiverType',
-    scopedSlots: { customRender: 'receiverType' }
-  },
-  {
-    title: '内容',
-    dataIndex: 'content',
-    width: '400px',
-    customRender: (text) => filterContent(text),
-    scopedSlots: { customRender: 'content' }
   },
   {
     title: '状态',
@@ -193,25 +171,13 @@ const columns = [
 
 const templateTypeMap = {
   1: {
-    text: '字符串'
+    text: '短信'
   },
   2: {
-    text: '文件'
+    text: '邮件'
   },
   3: {
-    text: 'SQL语句'
-  }
-}
-
-const receiverTypeMap = {
-  1: {
-    text: 'uid'
-  },
-  2: {
-    text: 'phone'
-  },
-  3: {
-    text: 'did'
+    text: '微信小程序'
   }
 }
 
@@ -231,20 +197,25 @@ const statusMap = {
 }
 
 export default {
-  name: 'receiver',
+  name: 'param',
   components: {
     STable,
     Ellipsis,
     CreateForm,
+    Detail,
     StepByStepModal
   },
   data () {
     this.columns = columns
     return {
+      detail: null,
       // create model
       visible: false,
+      chose: 1,
+      detailVisible: false,
       confirmLoading: false,
       mdl: null,
+      ddl: null,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
@@ -253,10 +224,9 @@ export default {
       },
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return receiverTemplateAll(parameter, this.queryParam)
+        return messageTemplateAll(parameter, this.queryParam)
           .then(res => {
             for (let i = 0; i < res.data.length; i++) {
-              res.data[i].receiverType = receiverTypeMap[res.data[i].receiverType].text
               res.data[i].type = templateTypeMap[res.data[i].type].text
             }
             return res
@@ -292,7 +262,6 @@ export default {
     }
   },
   methods: {
-
     queryByParam() {
       this.$refs.table.refresh()
     },
@@ -316,14 +285,22 @@ export default {
       this.mdl = null
       this.visible = true
     },
+    handleDetail (record) {
+      this.chose = record.id
+      getMessageTemplateDetail(record.id).then(res => {
+        this.detail = res.data
+        if (res.data.type === 2) {
+          this.detail.email = JSON.parse(res.data.content)
+        }
+        console.log(this.detail)
+      })
+      this.ddl = null
+      this.detailVisible = true
+    },
     handleEdit (record) {
       console.log(record)
       this.visible = true
       this.mdl = { ...record }
-    },
-
-    convertContent(data) {
-
     },
 
     handleOk () {
@@ -375,17 +352,14 @@ export default {
       this.confirmLoading = true
       form.validateFields((errors, values) => {
         if (!errors) {
-
-          if (values.type === 1) {
-            values.content = values.receivers
-          } else if (values.type === 2) {
-            values.content = values.fileurl
-          } else if (values.type === 3) {
-            values.content = values.sql
+          console.log(values.type)
+          if (values.type === 2) {
+            values.content = JSON.stringify(values.email)
+            values.email = undefined
           }
 
             // 新增
-          addReceiverTemplate(values).then(res => {
+          addMessageTemplate(values).then(res => {
               this.visible = false
               this.confirmLoading = false
               // 重置表单数据
@@ -418,12 +392,18 @@ export default {
       const form = this.$refs.createModal.form
       form.resetFields() // 清理表单数据（可不做）
     },
+    handleDetailCancel () {
+      this.detailVisible = false
+
+      const form = this.$refs.createModal.form
+      form.resetFields() // 清理表单数据（可不做）
+    },
     handleDelete() {
       console.log(this.selectedRowKeys)
       if (this.selectedRowKeys.length === 0) {
         this.$message.error('请先选择要删除的模板')
       } else {
-        deleteReceiverTemplateByIds(this.selectedRowKeys).then((res) => {
+        deleteMessageTemplateByIds(this.selectedRowKeys).then((res) => {
           if (res.code === 200) {
             this.$message.info('删除成功')
           } else {
@@ -437,7 +417,7 @@ export default {
       }
     },
     handleSub (record) {
-      deleteReceiverTemplateById(record.id).then((res) => {
+      deleteMessageTemplateById(record.id).then((res) => {
           if (res.code === 200) {
             this.$message.info('删除成功')
           } else {

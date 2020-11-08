@@ -4,7 +4,7 @@
 
 /**
  * 清理空值，对象
- * @param children
+ * @message children
  * @returns {*[]}
  */
 export function filterEmpty (children = []) {
@@ -13,7 +13,7 @@ export function filterEmpty (children = []) {
 
 /**
  * 获取字符串长度，英文字符 长度1，中文字符长度2
- * @param {*} str
+ * @message {*} str
  */
 export const getStrFullLength = (str = '') =>
   str.split('').reduce((pre, cur) => {
@@ -26,8 +26,8 @@ export const getStrFullLength = (str = '') =>
 
 /**
  * 截取字符串，根据 maxLength 截取后返回
- * @param {*} str
- * @param {*} maxLength
+ * @message {*} str
+ * @message {*} maxLength
  */
 export const cutStrByFullLength = (str = '', maxLength) => {
   let showLength = 0

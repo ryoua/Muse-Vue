@@ -121,7 +121,7 @@ export default {
     /**
      * 表格重新加载方法
      * 如果参数为 true, 则强制刷新到第一页
-     * @param Boolean bool
+     * @message Boolean bool
      */
     refresh (bool = false) {
       bool && (this.localPagination = Object.assign({}, {
@@ -131,9 +131,9 @@ export default {
     },
     /**
      * 加载数据方法
-     * @param {Object} pagination 分页选项器
-     * @param {Object} filters 过滤条件
-     * @param {Object} sorter 排序条件
+     * @message {Object} pagination 分页选项器
+     * @message {Object} filters 过滤条件
+     * @message {Object} sorter 排序条件
      */
     loadData (pagination, filters, sorter) {
       this.localLoading = true
@@ -199,8 +199,8 @@ export default {
     },
     /**
      * 用于更新已选中的列表数据 total 统计
-     * @param selectedRowKeys
-     * @param selectedRows
+     * @message selectedRowKeys
+     * @message selectedRows
      */
     updateSelect (selectedRowKeys, selectedRows) {
       this.selectedRows = selectedRows
@@ -227,7 +227,7 @@ export default {
     },
     /**
      * 处理交给 table 使用者去处理 clear 事件时，内部选中统计同时调用
-     * @param callback
+     * @message callback
      * @returns {*}
      */
     renderClear (callback) {

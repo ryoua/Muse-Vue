@@ -5,7 +5,7 @@ import './index.less'
 const api = {
   /**
    * open new tab on route fullPath
-   * @param config
+   * @message config
    */
   open: function (config) {
     events.$emit('open', config)
@@ -21,7 +21,7 @@ const api = {
   },
   /**
    * close route fullPath tab
-   * @param config
+   * @message config
    */
   close: function (config) {
     events.$emit('close', config)

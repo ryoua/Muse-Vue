@@ -54,8 +54,8 @@ export function isIE () {
 
 /**
  * Remove loading animate
- * @param id parent element id or class
- * @param timeout
+ * @message id parent element id or class
+ * @message timeout
  */
 export function removeLoadingAnimate (id = '', timeout = 1500) {
   if (id === '') {

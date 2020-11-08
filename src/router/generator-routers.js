@@ -75,7 +75,7 @@ const rootRouter = {
 
 /**
  * 动态生成菜单
- * @param token
+ * @message token
  * @returns {Promise<Router>}
  */
 export const generatorDynamicRouter = (token) => {
@@ -103,8 +103,8 @@ export const generatorDynamicRouter = (token) => {
 /**
  * 格式化树形结构数据 生成 vue-router 层级路由表
  *
- * @param routerMap
- * @param parent
+ * @message routerMap
+ * @message parent
  * @returns {*}
  */
 export const generator = (routerMap, parent) => {
@@ -154,9 +154,9 @@ export const generator = (routerMap, parent) => {
 
 /**
  * 数组转树形结构
- * @param list 源数组
- * @param tree 树
- * @param parentId 父ID
+ * @message list 源数组
+ * @message tree 树
+ * @message parentId 父ID
  */
 const listToTree = (list, tree, parentId) => {
   list.forEach(item => {

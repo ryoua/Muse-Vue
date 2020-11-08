@@ -21,7 +21,7 @@ const userApi = {
  *     remember_me: true,
  *     captcha: '12345'
  * }
- * @param parameter
+ * @message parameter
  * @returns {*}
  */
 export function login (parameter) {
@@ -69,7 +69,7 @@ export function logout () {
 
 /**
  * get user 2step code open?
- * @param parameter {*}
+ * @message parameter {*}
  */
 export function get2step (parameter) {
   return request({

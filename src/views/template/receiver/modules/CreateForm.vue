@@ -4,8 +4,8 @@
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
-    @ok="() => { $emit('add') }"
-    @cancel="() => { $emit('cancel') }"
+    @ok="() => { $emit('add'); }"
+    @cancel="() => { $emit('cancel'); }"
   >
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="formLayout">
@@ -18,7 +18,7 @@
           :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
           :required="false"
         >
-          <a-radio-group v-decorator="['templatetype', { initialValue: 1 }]">
+          <a-radio-group v-decorator="['type', { initialValue: 1 }]">
             <a-radio :value="1" @click="change(1)">字符串</a-radio>
             <a-radio :value="2" @click="change(2)">文件</a-radio>
             <a-radio :value="3" @click="change(3)">SQL</a-radio>
@@ -31,7 +31,7 @@
             :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
             :required="false"
           >
-            <a-radio-group v-decorator="['receivertype', { initialValue: 1 }]">
+            <a-radio-group v-decorator="['receiverType', { initialValue: 1 }]">
               <a-radio :value="1" >userid</a-radio>
               <a-radio :value="2" >phone</a-radio>
               <a-radio :value="3" >did</a-radio>
@@ -39,11 +39,11 @@
 
           </a-form-item>
 
-        <a-form-item label="字符串" v-if="this.templateType === 1">
+        <a-form-item label="字符串" v-if="this.type === 1">
           <a-input v-decorator="['receivers', {rules: [{required: true, min: 1, message: '请输入内容！'}]}]" />
         </a-form-item>
 
-        <a-form-item label="文件" v-if="this.templateType === 2">
+        <a-form-item label="文件" v-if="this.type === 2">
           <a-upload
             name="file"
             :multiple="false"
@@ -55,7 +55,7 @@
           </a-upload>
         </a-form-item>
 
-        <a-form-item label="SQL" v-if="this.templateType === 3">
+        <a-form-item label="SQL" v-if="this.type === 3">
           <a-textarea v-decorator="['sql', {rules: [{required: true, min: 1, message: '请输入SQL！'}]}]" />
         </a-form-item>
       </a-form>
@@ -86,7 +86,7 @@ export default {
   },
   data () {
     this.formLayout = {
-      templateType: 1,
+      type: 1,
       sql: '',
       receivers: '',
       labelCol: {
@@ -102,7 +102,7 @@ export default {
       headers: {
         authorization: 'authorization-text'
       },
-      templateType: 1,
+      type: 1,
       form: this.$form.createForm(this)
     }
   },
@@ -118,7 +118,7 @@ export default {
   methods: {
     change (i) {
        const _this = this
-       _this.templateType = i
+       _this.type = i
     },
     handleChange (info) {
       if (info.file.status !== 'uploading') {
