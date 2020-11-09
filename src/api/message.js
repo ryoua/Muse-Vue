@@ -11,6 +11,8 @@ const api = {
 
 export default api
 
+
+
 export function sendMessage (parameter) {
   return request({
     url: api.sendMessage ,

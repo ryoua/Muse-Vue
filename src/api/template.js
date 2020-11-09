@@ -9,6 +9,7 @@ const api = {
 
     messageTemplateAll: 'http://127.0.0.1:8443/manager/template/message/getAll',
     addMessageTemplate: 'http://127.0.0.1:8443/manager/template/message/add',
+    modifyMessageTemplate: 'http://127.0.0.1:8443/manager/template/message/update',
     deleteMessageTemplateById: 'http://127.0.0.1:8443/manager/template/message/delete',
     deleteMessageTemplateByIds: 'http://127.0.0.1:8443/manager/template/message/delete/batch',
     getMessageTemplateDetail: 'http://127.0.0.1:8443/manager/template/message/detail',
@@ -25,6 +26,14 @@ export function receiverTemplateAll (parameter, data) {
   })
 }
 
+
+export function modifyMessageTemplate (parameter) {
+  return request({
+    url: api.modifyMessageTemplate,
+    method: 'post',
+    data: parameter
+  })
+}
 
 export function addReceiverTemplate (parameter) {
   return request({

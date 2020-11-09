@@ -113,7 +113,7 @@
         :model="detail"
         @cancel="handleDetailCancel"
         @ok="handleOk"
-        @add="add"
+        @add="modify"
       />
         <step-by-step-modal ref="modal" @ok="handleOk"/>
       </div>
@@ -125,7 +125,7 @@
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getRoleList } from '@/api/manage'
-import { addMessageTemplate, messageTemplateAll, deleteMessageTemplateById, deleteMessageTemplateByIds, getMessageTemplateDetail } from '@/api/template'
+import { addMessageTemplate, modifyMessageTemplate, messageTemplateAll, deleteMessageTemplateById, deleteMessageTemplateByIds, getMessageTemplateDetail } from '@/api/template'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
@@ -291,6 +291,9 @@ export default {
         this.detail = res.data
         if (res.data.type === 2) {
           this.detail.email = JSON.parse(res.data.content)
+          this.detail.emailCopy = this.detail.email.copy
+          this.detail.emailTitle = this.detail.email.title
+          this.detail.emailContent = this.detail.email.content
         }
         console.log(this.detail)
       })
@@ -386,6 +389,50 @@ export default {
         }
       })
     },
+
+    modify () {
+      const form = this.$refs.createModal.form
+      this.confirmLoading = true
+      form.validateFields((errors, values) => {
+        if (!errors) {
+          console.log(values)
+          if (values.type === 2) {
+            values.email = {}
+            values.email.copy = values.emailCopy
+            values.email.title = values.emailTitle
+            values.email.content = values.emailContent
+            values.content = JSON.stringify(values.email)
+            values.email = undefined
+          }
+          // 新增
+          modifyMessageTemplate(values).then(res => {
+            this.detailVisible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+            if (res.code === 200) {
+              this.$message.info('修改成功')
+            } else {
+              this.$message.error('修改失败')
+            }
+          }).catch(() => {
+            this.visible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+
+            this.$message.error('新增失败')
+          })
+        } else {
+          this.confirmLoading = false
+        }
+      })
+    },
+
     handleCancel () {
       this.visible = false
 
