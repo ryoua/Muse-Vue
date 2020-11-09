@@ -125,7 +125,7 @@
               _this.loading = false
               _this.getData(values)
               _this.$emit('nextStep')
-            }, 1000)
+            }, 100)
           } else {
             _this.loading = false
           }

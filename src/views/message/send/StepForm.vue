@@ -70,6 +70,9 @@
       nextStep() {
         if (this.currentTab === 2) {
             sendMessage(this.messageSend).then(res => {
+
+            }).catch(() => {
+
             })
         }
         if (this.currentTab === 0) {

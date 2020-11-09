@@ -418,7 +418,7 @@ export default {
               this.$message.error('修改失败')
             }
           }).catch(() => {
-            this.visible = false
+            this.detailVisible = false
             this.confirmLoading = false
             // 重置表单数据
             form.resetFields()

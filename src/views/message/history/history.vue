@@ -68,8 +68,10 @@
         :rowSelection="rowSelection"
         showPagination="auto"
       >
+
         <span slot="action" slot-scope="text, record">
           <template>
+            <a-progress :percent="20" :status=" null " style="width: 180px" />
             <a-divider type="vertical" />
             <a-popconfirm
               title="确定删除吗?"
