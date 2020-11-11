@@ -130,7 +130,7 @@
       validateFields((err, values) => {
         if (!err) {
           if (this.choseTemplate) {
-           values.id = values.templateId.label
+           values.id = values.templateId.key
           }
           this.getData(values)
           this.$emit('nextStep')

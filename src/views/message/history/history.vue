@@ -107,22 +107,10 @@
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
 import { getRoleList } from '@/api/manage'
-import { receiverTemplateAll, addReceiverTemplate, deleteReceiverTemplateById, deleteReceiverTemplateByIds } from '@/api/template'
+import { getAllMessageSendHistory } from '@/api/message'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
-
-function convertContent() {
-
-}
-
-function filterContent(text) {
-  if (!text) return '';
-  if (text.length > 30) {
-    return text.slice(0, 30) + '...'
-  }
-  return text
-}
 
 const columns = [
   {
@@ -134,27 +122,24 @@ const columns = [
     dataIndex: 'name'
   },
   {
-    title: '消息类型',
+    title: '发送类型',
     dataIndex: 'type',
     scopedSlots: { customRender: 'type' }
   },
   {
-    title: '发送类型',
+    title: '消息类型',
+    dataIndex: 'messageType',
+    scopedSlots: { customRender: 'receiverType' }
+  },
+  {
+    title: '接收人群类型',
     dataIndex: 'receiverType',
     scopedSlots: { customRender: 'receiverType' }
   },
   {
-    title: '发送人群数量',
-    dataIndex: 'content',
-    width: '100px',
-    customRender: (text) => filterContent(text),
-    scopedSlots: { customRender: 'content' }
-  },
-  {
     title: '状态',
-    dataIndex: 'status',
-    width: '200px',
-    scopedSlots: { customRender: 'status' }
+    dataIndex: 'step',
+    scopedSlots: { customRender: 'step' }
   },
   {
     title: '创建时间',
@@ -171,7 +156,7 @@ const columns = [
   }
 ]
 
-const sendTypeMap = {
+const TypeMap = {
   1: {
     text: '周期发送'
   },
@@ -189,7 +174,7 @@ const messageTypeMap = {
   }
 }
 
-const statusMap = {
+const stepMap = {
   0: {
     status: 'default',
     text: '下发中'
@@ -227,31 +212,17 @@ export default {
       },
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return receiverTemplateAll(parameter, this.queryParam)
+        return getAllMessageSendHistory(parameter, this.queryParam)
           .then(res => {
             for (let i = 0; i < res.data.length; i++) {
-              res.data[i].receiverType = sendTypeMap[res.data[i].receiverType].text
-              res.data[i].type = messageTypeMap[res.data[i].type].text
+              res.data[i].type = TypeMap[res.data[i].type].text
+              res.data[i].messageType = messageTypeMap[res.data[i].messageType].text
             }
             return res
           }).catch((e) => {})
       },
       selectedRowKeys: [],
       selectedRows: []
-    }
-  },
-  filters: {
-    statusFilter (type) {
-      return statusMap[type].text
-    },
-    statusTypeFilter (type) {
-      return statusMap[type].status
-    },
-    receiverFilter (type) {
-      return receiverTypeMap[type].text
-    },
-    templateFilter (type) {
-      return templateTypeMap[type].text
     }
   },
   created () {
@@ -279,13 +250,6 @@ export default {
 
     },
 
-
-    receiverFilter (type) {
-      return sendTypeMap[type].text
-    },
-    templateFilter (type) {
-      return templateTypeMap[type].text
-    },
     handleAdd () {
       this.mdl = null
       this.visible = true
@@ -344,48 +308,7 @@ export default {
         }
       })
     },
-    add () {
-      const form = this.$refs.createModal.form
-      this.confirmLoading = true
-      form.validateFields((errors, values) => {
-        if (!errors) {
 
-          if (values.type === 1) {
-            values.content = values.receivers
-          } else if (values.type === 2) {
-            values.content = values.fileurl
-          } else if (values.type === 3) {
-            values.content = values.sql
-          }
-
-            // 新增
-          addReceiverTemplate(values).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-            if (res.code === 200) {
-              this.$message.info('新增成功')
-            } else {
-              this.$message.error('新增失败')
-            }
-            }).catch(() => {
-            this.visible = false
-            this.confirmLoading = false
-            // 重置表单数据
-            form.resetFields()
-            // 刷新表格
-            this.$refs.table.refresh()
-
-            this.$message.error('新增失败')
-          })
-        } else {
-          this.confirmLoading = false
-        }
-      })
-    },
     handleCancel () {
       this.visible = false
 

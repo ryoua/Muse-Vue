@@ -58,12 +58,27 @@
 
         if (type === 2) {
           this.messageSend.message = data
+          if (data.choseTemplate) {
+            this.messageSend.message.message = data.id
+          }
         }
 
         if (type === 3) {
           this.messageSend.receiver = data.receiver
+          if (data.receiver.type === 0) {
+            this.messageSend.receiver.choseTemplate = true
+            this.messageSend.receiver.receiver = data.receiver.content.key
+          } else {
+            this.messageSend.receiver.choseTemplate = false
+            if (data.receiver.type === 1) {
+              this.messageSend.receiver.receiver = data.receiver.str
+            } else if (data.receiver.type === 2) {
+              this.messageSend.receiver.receiver = data.receiver.fileUrl
+            } else {
+              this.messageSend.receiver.content = data.receiver.sql
+            }
+          }
         }
-        console.log(this.messageSend)
       },
 
       // handler

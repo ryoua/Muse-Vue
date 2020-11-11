@@ -6,12 +6,20 @@ const api = {
   getReceiverTemplateNameLike: 'http://127.0.0.1:8443/manager/template/receiver/getTemplateNameLike',
   getAllMessageTemplateName: 'http://127.0.0.1:8443/manager/template/message/getAllTemplateName',
   getMessageTemplateNameLike: 'http://127.0.0.1:8443/manager/template/message/getTemplateNameLike',
+  getAllMessageSendHistory: 'http://127.0.0.1:8443//manager/message/send/history/all',
   sendMessage: 'http://127.0.0.1:8443/manager/message/send'
 }
 
 export default api
 
-
+export function getAllMessageSendHistory (parameter, data) {
+  return request({
+    url: api.getAllMessageSendHistory,
+    method: 'post',
+    params: parameter,
+    data: data
+  })
+}
 
 export function sendMessage (parameter) {
   return request({

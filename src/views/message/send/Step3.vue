@@ -14,12 +14,34 @@
       >
         <a-select v-model="choseUser.type"
                   v-decorator="['receiver.type', { initialValue: choseUser.type, rules: [{required: true, message: '消息类型必须选择'}] }]">
+          <a-select-option :value=0>使用模板</a-select-option>
           <a-select-option :value=1>直接输入</a-select-option>
           <a-select-option :value=2>文件上传</a-select-option>
           <a-select-option :value=3>SQL查询</a-select-option>
         </a-select>
       </a-form-item>
 
+      <a-form-item
+        label="模板列表"
+        :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+        :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
+        :required="true"
+        v-if="choseUser.type === 0">
+        <a-select
+          label-in-value
+          :value="value"
+          placeholder="请选择模板"
+          mode="default"
+          style="width: 100%"
+          :filter-option="false"
+          @dropdownVisibleChange="getTemplateName"
+          v-decorator="['receiver.content', { initialValue: [], rules: [{required: true, message: '必须选择模板'}]}]"
+
+        >
+          <a-spin  slot="notFoundContent" size="small" />
+          <a-select-option v-for="d in data" :key="d.id">{{d.name}}</a-select-option>
+        </a-select>
+      </a-form-item>
 
       <a-form-item
         label="用户id"
@@ -74,12 +96,13 @@
 
 <script>
 
-  // import { sendMessage } from '@/api/manager'
+  import { getAllMessageTemplateName, getAllReceiverTemplateName, getReceiverTemplateNameLike } from '@/api/message'
 
   export default {
     name: 'Step3',
     data () {
       return {
+        data: [],
         choseUser: {
           type: 1,
           sql: '',
@@ -93,6 +116,8 @@
             url: 'http://www.baidu.com/xxx.png',
           },
         ],
+        value: undefined,
+        choseTemplate: true,
         labelCol: { lg: { span: 5 }, sm: { span: 5 } },
         wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
         form: this.$form.createForm(this),
@@ -131,7 +156,11 @@
           }
         })
       },
-
+      getTemplateName() {
+        getAllReceiverTemplateName().then((res) => {
+          this.data = res.data
+        })
+      },
       getData(values) {
         this.$emit('getData', values, 3)
       },
