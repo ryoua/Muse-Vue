@@ -46,9 +46,9 @@
         <a-form-item label="文件" v-if="this.type === 2">
           <a-upload
             name="file"
-            :multiple="false"
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            :headers="headers"
+            :multiple="true"
+            action="http://127.0.0.1:8443/upload"
+            :file-list="fileList"
             @change="handleChange"
           >
             <a-button> <a-icon type="upload" /> 点击上传 </a-button>
@@ -99,6 +99,9 @@ export default {
       }
     }
     return {
+      fileList: [
+
+      ],
       headers: {
         authorization: 'authorization-text'
       },
@@ -121,14 +124,32 @@ export default {
        _this.type = i
     },
     handleChange (info) {
+      let fileList = [...info.fileList];
+
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList)
+        console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
-        this.$message.success(`${info.file.name} file uploaded successfully`)
+        this.$message.success(`${info.file.name} 文件上传成功`);
       } else if (info.file.status === 'error') {
-        this.$message.error(`${info.file.name} file upload failed.`)
+        this.$message.error(`${info.file.name} 文件上传失败`);
       }
+
+
+      // 1. Limit the number of uploaded files
+      //    Only to show two recent uploaded files, and old ones will be replaced by the new
+      fileList = fileList.slice(-1);
+
+      // 2. read from response and show file link
+      fileList = fileList.map(file => {
+        if (file.response) {
+          // Component will show file.url as link
+          file.url = file.response.url;
+        }
+        return file;
+      });
+
+      this.fileList = fileList;
     }
   }
 }
