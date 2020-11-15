@@ -78,7 +78,6 @@
               ok-text="是"
               cancel-text="否"
               @confirm="handleSub(record)"
-              @cancel="cancel"
             >
         <a-button type="danger" size="small">删除</a-button>
       </a-popconfirm>
@@ -87,18 +86,6 @@
         </span>
       </s-table>
 
-      <div v-if="visible">
-      <create-form
-        ref="createModal"
-        :visible="visible"
-        :loading="confirmLoading"
-        :model="mdl"
-        @cancel="handleCancel"
-        @ok="handleOk"
-        @add="add"
-        />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
-      </div>
     </a-card>
   </page-header-wrapper>
 </template>
@@ -129,7 +116,7 @@ const columns = [
   {
     title: '消息类型',
     dataIndex: 'messageType',
-    scopedSlots: { customRender: 'receiverType' }
+    scopedSlots: { customRender: 'messageType' }
   },
   {
     title: '接收人群类型',
@@ -143,7 +130,7 @@ const columns = [
   },
   {
     title: '创建时间',
-    dataIndex: 'updateTime',
+    dataIndex: 'createTime',
     width: '200px',
     customRender: (text) => new Date(text).format("yyyy-MM-dd hh:mm:ss"),
     sorter: true
@@ -215,8 +202,9 @@ export default {
         return getAllMessageSendHistory(parameter, this.queryParam)
           .then(res => {
             for (let i = 0; i < res.data.length; i++) {
-              res.data[i].type = TypeMap[res.data[i].type].text
+              console.log(res.data[i].messageType)
               res.data[i].messageType = messageTypeMap[res.data[i].messageType].text
+              res.data[i].type = TypeMap[res.data[i].type].text
             }
             return res
           }).catch((e) => {})
@@ -242,14 +230,6 @@ export default {
       this.$refs.table.refresh()
     },
 
-    confirm(e) {
-      console.log(e);
-      this.$message.success('Click on Yes');
-    },
-    cancel(e) {
-
-    },
-
     handleAdd () {
       this.mdl = null
       this.visible = true
@@ -260,54 +240,6 @@ export default {
       this.mdl = { ...record }
     },
 
-    convertContent(data) {
-
-    },
-
-    handleOk () {
-      const form = this.$refs.createModal.form
-      this.confirmLoading = true
-      form.validateFields((errors, values) => {
-        if (!errors) {
-          console.log('values', values)
-          if (values.id > 0) {
-            // 修改 e.g.
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('修改成功')
-            })
-          } else {
-            // 新增
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('新增成功')
-            })
-          }
-        } else {
-          this.confirmLoading = false
-        }
-      })
-    },
 
     handleCancel () {
       this.visible = false
@@ -315,6 +247,7 @@ export default {
       const form = this.$refs.createModal.form
       form.resetFields() // 清理表单数据（可不做）
     },
+
     handleDelete() {
       console.log(this.selectedRowKeys)
       if (this.selectedRowKeys.length === 0) {
@@ -333,6 +266,7 @@ export default {
         this.$refs.table.refresh()
       }
     },
+
     handleSub (record) {
       deleteReceiverTemplateById(record.id).then((res) => {
           if (res.code === 200) {
@@ -346,13 +280,16 @@ export default {
       })
       this.$refs.table.refresh()
     },
+
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
+
     toggleAdvanced () {
       this.advanced = !this.advanced
     },
+
     resetSearchForm () {
       this.queryParam = {
         date: moment(new Date())
