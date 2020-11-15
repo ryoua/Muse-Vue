@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 const api = {
-    receiverTemplateAll: 'http://localhost:8443/manager/template/receiver/getAll',
-    addReceiverTemplate: 'http://localhost:8443/manager/template/receiver/add',
-    deleteReceiverTemplateById: 'http://localhost:8443/manager/template/receiver/delete',
-    deleteReceiverTemplateByIds: 'http://localhost:8443/manager/template/receiver/delete/batch',
+    receiverTemplateAll: 'manager/template/receiver/getAll',
+    addReceiverTemplate: 'manager/template/receiver/add',
+    deleteReceiverTemplateById: 'manager/template/receiver/delete',
+    deleteReceiverTemplateByIds: 'manager/template/receiver/delete/batch',
 
 
-    messageTemplateAll: 'http://localhost:8443/manager/template/message/getAll',
-    addMessageTemplate: 'http://localhost:8443/manager/template/message/add',
-    modifyMessageTemplate: 'http://localhost:8443/manager/template/message/update',
-    deleteMessageTemplateById: 'http://localhost:8443/manager/template/message/delete',
-    deleteMessageTemplateByIds: 'http://1localhost:8443/manager/template/message/delete/batch',
-    getMessageTemplateDetail: 'http://localhost:8443/manager/template/message/detail',
+    messageTemplateAll: 'manager/template/message/getAll',
+    addMessageTemplate: 'manager/template/message/add',
+    modifyMessageTemplate: 'manager/template/message/update',
+    deleteMessageTemplateById: 'manager/template/message/delete',
+    deleteMessageTemplateByIds: 'manager/template/message/delete/batch',
+    getMessageTemplateDetail: 'manager/template/message/detail',
 }
 
 export default api

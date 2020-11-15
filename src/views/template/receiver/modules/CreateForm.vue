@@ -134,16 +134,9 @@ export default {
       } else if (info.file.status === 'error') {
         this.$message.error(`${info.file.name} 文件上传失败`);
       }
-
-
-      // 1. Limit the number of uploaded files
-      //    Only to show two recent uploaded files, and old ones will be replaced by the new
       fileList = fileList.slice(-1);
-
-      // 2. read from response and show file link
       fileList = fileList.map(file => {
         if (file.response) {
-          // Component will show file.url as link
           file.url = file.response.url;
         }
         return file;

@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
 const api = {
-  getSendNameIsExist: 'http://localhost:8443/manager/message/send/name',
-  getAllReceiverTemplateName: 'http://localhost:8443/manager/template/receiver/getAllTemplateName',
-  getReceiverTemplateNameLike: 'http://localhost:8443/manager/template/receiver/getTemplateNameLike',
-  getAllMessageTemplateName: 'http://localhost:8443/manager/template/message/getAllTemplateName',
-  getMessageTemplateNameLike: 'http://localhost:8443/manager/template/message/getTemplateNameLike',
-  getAllMessageSendHistory: 'http://localhost:8443//manager/message/send/history/all',
-  sendMessage: 'http://localhost:8443/manager/message/send'
+  getSendNameIsExist: 'manager/message/send/name',
+  getAllReceiverTemplateName: 'manager/template/receiver/getAllTemplateName',
+  getReceiverTemplateNameLike: 'manager/template/receiver/getTemplateNameLike',
+  getAllMessageTemplateName: 'manager/template/message/getAllTemplateName',
+  getMessageTemplateNameLike: 'manager/template/message/getTemplateNameLike',
+  getAllMessageSendHistory: 'manager/message/send/history/all',
+  sendMessage: 'manager/message/send'
 }
 
 export default api

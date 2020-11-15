@@ -3,52 +3,71 @@
     <a-row :gutter="16">
       <a-col :md="24" :lg="16">
 
-        <a-form layout="vertical">
-          <a-form-item
-            label="昵称"
-          >
-            <a-input placeholder="给自己起个名字" />
-          </a-form-item>
-          <a-form-item
-            label="Bio"
-          >
-            <a-textarea rows="4" placeholder="You are not alone."/>
-          </a-form-item>
+        <a-spin :spinning="loading">
+          <a-form :form="form" v-bind="formLayout">
+            <a-form-item
+              label="邮件服务器地址"
+              :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+              :wrapperCol="{lg: {span: 7}, sm: {span: 7} }"
+              :required="true"
+              class="stepFormText"
+            >
+              <a-input
+                style="width: 80%;"
+                v-decorator="['email.host', { initialValue: '', rules: [{required: true, message: '请输入SMTP地址'}] }]" />
+            </a-form-item>
 
-          <a-form-item
-            label="电子邮件"
-            :required="false"
-          >
-            <a-input placeholder="exp@admin.com"/>
-          </a-form-item>
-          <a-form-item
-            label="加密方式"
-            :required="false"
-          >
-            <a-select defaultValue="aes-256-cfb">
-              <a-select-option value="aes-256-cfb">aes-256-cfb</a-select-option>
-              <a-select-option value="aes-128-cfb">aes-128-cfb</a-select-option>
-              <a-select-option value="chacha20">chacha20</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item
-            label="连接密码"
-            :required="false"
-          >
-            <a-input placeholder="h3gSbecd"/>
-          </a-form-item>
-          <a-form-item
-            label="登录密码"
-            :required="false"
-          >
-            <a-input placeholder="密码"/>
-          </a-form-item>
+            <a-form-item
+              label="邮件服务器端口"
+              :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+              :wrapperCol="{lg: {span: 7}, sm: {span: 7} }"
+              :required="true"
+              class="stepFormText"
+            >
+              <a-input
+                style="width: 80%;"
+                v-decorator="['email.port', { initialValue: '', rules: [{required: true, message: '请输入SMTP端口'}] }]" />
+            </a-form-item>
 
-          <a-form-item>
-            <a-button type="primary">提交</a-button>
-            <a-button style="margin-left: 8px">保存</a-button>
-          </a-form-item>
-        </a-form>
+            <a-form-item
+              label="发件人"
+              :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+              :wrapperCol="{lg: {span: 7}, sm: {span: 7} }"
+              :required="true"
+              class="stepFormText"
+            >
+              <a-input
+                style="width: 80%;"
+                v-decorator="['email.from', { initialValue: '', rules: [{required: true, message: '请输入SMTP端口'}] }]" />
+            </a-form-item>
+
+            <a-form-item
+              label="用户名"
+              :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+              :wrapperCol="{lg: {span: 7}, sm: {span: 7} }"
+              :required="true"
+              class="stepFormText"
+            >
+              <a-input
+                style="width: 80%;"
+                v-decorator="['email.username', { initialValue: '', rules: [{required: true, message: '请输入SMTP端口'}] }]" />
+            </a-form-item>
+
+            <a-form-item
+              label="密码"
+              :labelCol="{lg: {span: 5}, sm: {span: 7}}"
+              :wrapperCol="{lg: {span: 7}, sm: {span: 7} }"
+              :required="true"
+              class="stepFormText"
+            >
+              <a-input
+                style="width: 80%;"
+                v-decorator="['email.password', { initialValue: '', rules: [{required: true, message: '请输入SMTP端口'}] }]" />
+            </a-form-item>
+
+
+          </a-form>
+        </a-spin>
 
       </a-col>
       <a-col :md="24" :lg="8" :style="{ minHeight: '180px' }">
@@ -72,6 +91,20 @@
 import AvatarModal from './AvatarModal'
 
 export default {
+  props: {
+    visible: {
+      type: Boolean,
+      required: true
+    },
+    loading: {
+      type: Boolean,
+      default: () => false
+    },
+    model: {
+      type: Object,
+      default: () => null
+    }
+  },
   components: {
     AvatarModal
   },
