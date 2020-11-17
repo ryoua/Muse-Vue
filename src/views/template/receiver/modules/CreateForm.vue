@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="新增接收人群模板"
-    :width="640"
+    :width="800"
     :visible="visible"
     :confirmLoading="loading"
     @ok="() => { $emit('add'); }"
@@ -28,11 +28,12 @@
           <a-form-item
             label="接收人群类型"
             :labelCol="{lg: {span: 7}, sm: {span: 7}}"
-            :wrapperCol="{lg: {span: 10}, sm: {span: 17} }"
+            :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
             :required="false"
           >
             <a-radio-group v-decorator="['receiverType', { initialValue: 1 }]">
               <a-radio :value="1" >userid</a-radio>
+              <a-radio :value="4" >email</a-radio>
               <a-radio :value="2" >phone</a-radio>
               <a-radio :value="3" >did</a-radio>
             </a-radio-group>
@@ -50,6 +51,7 @@
             action="http://127.0.0.1:8443/upload"
             :file-list="fileList"
             @change="handleChange"
+            v-decorator="['fileUrl', {rules: [{required: true,  message: '请上传文件！'}]}]"
           >
             <a-button> <a-icon type="upload" /> 点击上传 </a-button>
           </a-upload>
@@ -102,6 +104,7 @@ export default {
       fileList: [
 
       ],
+      fileUrl: '',
       headers: {
         authorization: 'authorization-text'
       },
@@ -125,7 +128,7 @@ export default {
     },
     handleChange (info) {
       let fileList = [...info.fileList];
-
+      this.fileUrl = info.file.response
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
       }

@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-if="http://www.w3.org/1999/html">
   <page-header-wrapper>
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
@@ -84,16 +84,26 @@
         <span slot="serial" slot-scope="text, record, index">
           {{ index + 1 }}
         </span>
+
         <span slot="content" slot-scope="text">
-<!--          <a-badge style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6;overflow: hidden"/>-->
+          <div v-if="text.content.indexOf('$$_$$') !== -1">
+            <a :href="text.content.substring(0, text.content.indexOf('$$_$$'))">
+            {{ text.content.substring(text.content.indexOf('$$_$$') + 5) }}
+            </a>
+          </div>
+
+          <div v-if="text.content.indexOf('$$_$$') === -1">
+            {{ text.content }}
+          </div>
         </span>
+
         <span slot="status" slot-scope="text">
           <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
         </span>
 
         <span slot="action" slot-scope="text, record">
           <template>
-            <a-divider type="vertical" />
+            <a-divider type="vertical"/>
             <a-popconfirm
               title="确定删除吗?"
               ok-text="是"
@@ -133,14 +143,14 @@ import { receiverTemplateAll, addReceiverTemplate, deleteReceiverTemplateById, d
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
 
-function convertContent() {
-
-}
-
 function filterContent(text) {
   if (!text) return '';
-  if (text.length > 30) {
-    return text.slice(0, 30) + '...'
+  if (text.indexOf('$$_$$') != -1) {
+    return text.substring(text.indexOf('$$_$$') + 5)
+  }
+
+  if (text.length > 40) {
+    return text.slice(0, 40) + '...'
   }
   return text
 }
@@ -166,10 +176,10 @@ const columns = [
   },
   {
     title: '内容',
-    dataIndex: 'content',
+    dataIndex: '',
     width: '400px',
-    customRender: (text) => filterContent(text),
-    scopedSlots: { customRender: 'content' }
+    scopedSlots: { customRender: 'content' },
+    // customRender: (text) => filterContent(text)
   },
   {
     title: '状态',
@@ -379,7 +389,7 @@ export default {
           if (values.type === 1) {
             values.content = values.receivers
           } else if (values.type === 2) {
-            values.content = values.fileurl
+            values.content = values.fileUrl.file.response + '$$_$$' + values.fileUrl.file.name
           } else if (values.type === 3) {
             values.content = values.sql
           }
