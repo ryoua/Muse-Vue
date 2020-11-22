@@ -5,6 +5,7 @@ const api = {
   getAllReceiverTemplateName: 'manager/template/receiver/getAllTemplateName',
   getReceiverTemplateNameLike: 'manager/template/receiver/getTemplateNameLike',
   getAllMessageTemplateName: 'manager/template/message/getAllTemplateName',
+  searchMessageTemplateName: 'manager/template/message/search',
   getMessageTemplateNameLike: 'manager/template/message/getTemplateNameLike',
   getAllMessageSendHistory: 'manager/message/send/history/all',
   sendMessage: 'manager/message/send'
@@ -51,10 +52,18 @@ export function getReceiverTemplateNameLike(parameter) {
   })
 }
 
-export function getAllMessageTemplateName() {
+export function getAllMessageTemplateName(paramter) {
   return request({
-    url: api.getAllMessageTemplateName,
+    url: api.getAllMessageTemplateName + '/' + paramter,
     method: 'get'
+  })
+}
+
+export function searchMessageTemplateName(parameter) {
+  return request({
+    url: api.searchMessageTemplateName,
+    method: 'get',
+    params: parameter
   })
 }
 

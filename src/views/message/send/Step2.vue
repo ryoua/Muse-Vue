@@ -36,8 +36,10 @@
           mode="default"
           style="width: 100%"
           :filter-option="false"
+          :showSearch="true"
           @search="handleSearch"
           @change="handleChange"
+          :not-found-content="fetching ? undefined : null"
           @dropdownVisibleChange="getTemplateName"
           v-decorator="['templateId', { initialValue: [], rules: [{required: true, message: '必须选择模板'}]}]"
         >
@@ -92,13 +94,15 @@
 </template>
 
 <script>
-  import { getAllMessageTemplateName } from '@/api/message'
+  import { getAllMessageTemplateName, searchMessageTemplateName } from '@/api/message'
 
   export default {
+    props: ['messageType'],
   name: 'Step2',
   data () {
     return {
       data: [],
+      fetching: false,
       value: undefined,
       choseTemplate: true,
       labelCol: { lg: { span: 5 }, sm: { span: 5 } },
@@ -113,14 +117,28 @@
       this.choseTemplate = flag
     },
     handleSearch(value) {
-      // fetch(value, data => (this.data = data));
+      if (value !== '' && value !== null) {
+        this.fetching = true;
+        let param = { };
+        param.messageType = this.messageType;
+        param.search = value;
+        searchMessageTemplateName(param).then((res) => {
+          if (res.data.length === 0) {
+            this.data = []
+          } else {
+            this.data = res.data
+          }
+          this.fetching = false;
+        })
+      } else {
+        this.getTemplateName()
+      }
     },
     handleChange(value) {
-      console.log(value);
       fetch(value, data => (this.data = data));
     },
     getTemplateName() {
-      getAllMessageTemplateName().then((res) => {
+      getAllMessageTemplateName(this.messageType).then((res) => {
         this.data = res.data
       })
     },

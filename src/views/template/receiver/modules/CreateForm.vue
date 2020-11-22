@@ -128,6 +128,7 @@ export default {
     },
     handleChange (info) {
       let fileList = [...info.fileList];
+      fileList = fileList.slice(-1);
       this.fileUrl = info.file.response
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);

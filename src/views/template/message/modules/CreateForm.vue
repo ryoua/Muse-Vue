@@ -41,7 +41,7 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="true"
           class="stepFormText"
-          v-show="type === 2"
+          v-if="type === 2"
         >
           <a-input
             style="width: 80%;"
@@ -53,7 +53,7 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="false"
           class="stepFormText"
-          v-show="type === 2"
+          v-if="type === 2"
         >
           <a-input
             style="width: 80%;"
@@ -65,7 +65,7 @@
           :wrapperCol="{lg: {span: 15}, sm: {span: 25} }"
           :required="true"
           class="stepFormText"
-          v-show="type === 2"
+          v-if="type === 2"
         >
           <a-textarea
             style="width: 100%; height: 200px"
@@ -116,7 +116,6 @@ export default {
       headers: {
         authorization: 'authorization-text'
       },
-      templateType: 1,
       form: this.$form.createForm(this)
     }
   },
@@ -132,7 +131,7 @@ export default {
   methods: {
     change (i) {
        const _this = this
-       _this.templateType = i
+       _this.type = i
     },
     handleChange (info) {
       if (info.file.status !== 'uploading') {

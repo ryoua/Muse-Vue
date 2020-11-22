@@ -63,6 +63,8 @@ export default {
                 if (res.data === 200) {
                   _this.loading = false
                   _this.getData(values)
+                  // Vue.prototype.$EventBus = new Vue()
+                  // _this.$EventBus.$emit('messageType', values)
                   _this.$emit('nextStep')
                 } else if (res.data === 202){
                   _this.loading = false

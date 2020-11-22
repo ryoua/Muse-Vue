@@ -11,7 +11,7 @@
       </a-steps>
       <div class="content">
         <step1 v-show="currentTab === 0" @nextStep="nextStep" @getData="getData"/>
-        <step2 v-show="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" @getData="getData"/>
+        <step2 v-bind:messageType="this.messageSend.messageType" v-show="currentTab === 1" @nextStep="nextStep" @prevStep="prevStep" @getData="getData" />
         <step3 v-show="currentTab === 2" @nextStep="nextStep" @prevStep="prevStep" @getData="getData"/>
         <step4 v-show="currentTab === 3" @prevStep="prevStep" @finish="finish" @getData="getData"/>
       </div>
@@ -48,6 +48,10 @@
       }
     },
     methods: {
+      getType() {
+        return this.messageSend.messageType;
+      },
+
       getData(data, type) {
         if (data['messageType'] != null) {
           this.messageSend.messageType = data['messageType']

@@ -93,7 +93,7 @@
           </div>
 
           <div v-if="text.content.indexOf('$$_$$') === -1">
-            {{ text.content }}
+            {{ text.content.length >= 40 ? text.content.substring(0, 40) + '...' : text.content.substring(0, 40)}}
           </div>
         </span>
 
@@ -389,7 +389,17 @@ export default {
           if (values.type === 1) {
             values.content = values.receivers
           } else if (values.type === 2) {
-            values.content = values.fileUrl.file.response + '$$_$$' + values.fileUrl.file.name
+            if (values.fileUrl.file.status === 'done') {
+              values.content = values.fileUrl.file.response + '$$_$$' + values.fileUrl.file.name
+            } else if (values.fileUrl.file.status === 'uploading'){
+              this.$message.info('文件上传中')
+              this.confirmLoading = false
+              return;
+            } else {
+              this.$message.info('文件上传失败')
+              this.confirmLoading = true
+              return;
+            }
           } else if (values.type === 3) {
             values.content = values.sql
           }

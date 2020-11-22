@@ -76,12 +76,14 @@
 
         </span>
       </a-list-item-meta>
-
     </a-list-item>
   </a-list>
 </template>
 
 <script>
+  import {saveEmailSetting} from '@/api/setting'
+  import { addMessageTemplate } from '@/api/template'
+
 export default {
   data () {
     return {
@@ -92,6 +94,47 @@ export default {
         { title: '备用邮箱', description: '已绑定邮箱', value: 'ant***sign.com', actions: { title: '修改', callback: () => { this.$message.warning('This is message of warning') } } },
         { title: 'MFA 设备', description: '未绑定 MFA 设备，绑定后，可以进行二次确认', value: '', actions: { title: '绑定', callback: () => { this.$message.info('This is a normal message') } } }
       ]
+    }
+  },
+  methods: {
+    saveEmailSetting() {
+      const form = this.$refs.createModal.form
+      this.confirmLoading = true
+      form.validateFields((errors, values) => {
+        if (!errors) {
+          console.log(values.type)
+          if (values.type === 2) {
+            values.content = JSON.stringify(values.email)
+            values.email = undefined
+          }
+
+          // 新增
+          addMessageTemplate(values).then(res => {
+            this.visible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+            if (res.code === 200) {
+              this.$message.info('新增成功')
+            } else {
+              this.$message.error('新增失败')
+            }
+          }).catch(() => {
+            this.visible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+
+            this.$message.error('新增失败')
+          })
+        } else {
+          this.confirmLoading = false
+        }
+      })
     }
   }
 }
